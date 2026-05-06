@@ -1,0 +1,56 @@
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+a {
+  -webkit-tap-highlight-color: transparent;
+  background-color: transparent !important;
+}
+
+a:active {
+  background-color: transparent !important;
+}
+
+.breadcrumbs {
+  margin-top: 30px;
+  margin-left: 50px;
+  font-size: 1rem;
+  color: #666;
+}
+
+.breadcrumbs a {
+  color: #999;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  background: none;
+}
+
+.breadcrumbs a:hover {
+  color: rgb(255, 255, 255);
+  text-decoration: underline;
+}
+
+.separator {
+  margin: 0 8px;
+  color: #999;
+}
+
+.current {
+  color: rgb(255, 255, 255);
+  font-weight: 500;
+}
+
+
+@media (max-width: 768px) {
+  .breadcrumbs {
+    font-size: 0.875rem;
+    margin-left: 15px;
+  }
+}

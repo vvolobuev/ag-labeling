@@ -1,0 +1,2 @@
+ALTER TABLE prices RENAME TO services;
+ALTER TABLE services ADD COLUMN service_id SERIAL UNIQUE NOT NULL;

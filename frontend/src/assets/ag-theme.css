@@ -1,0 +1,203 @@
+:root {
+  --ag-bg: #1b1b1c;
+  --ag-surface: #242426;
+  --ag-surface2: #2c2c2f;
+  --ag-accent: #4d6bfe;
+  --ag-accent-hover: #6b84ff;
+  --ag-text: #ffffff;
+  --ag-muted: rgba(255, 255, 255, 0.68);
+  --ag-border: rgba(255, 255, 255, 0.08);
+  --ag-radius: 14px;
+  --ag-blur: 12px;
+  /* Short transitions: pages, hovers, fields for snappy feel */
+  --ag-duration: 0.16s;
+  --ag-ease: cubic-bezier(0.28, 0.46, 0.45, 0.94);
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family:
+    'Montserrat',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
+  background: var(--ag-bg);
+  color: var(--ag-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+a.ag-link {
+  color: var(--ag-accent);
+  text-decoration: none;
+  transition: color var(--ag-duration) var(--ag-ease);
+}
+
+a.ag-link:hover {
+  color: var(--ag-accent-hover);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition:
+    opacity var(--ag-duration) var(--ag-ease),
+    transform var(--ag-duration) var(--ag-ease);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.fade-slow-enter-active,
+.fade-slow-leave-active {
+  transition: opacity 0.18s var(--ag-ease);
+}
+
+.fade-slow-enter-from {
+  opacity: 0;
+}
+
+.lift-hover {
+  transition:
+    transform var(--ag-duration) var(--ag-ease),
+    box-shadow var(--ag-duration) var(--ag-ease);
+}
+
+.lift-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.45);
+}
+
+input.ag-input,
+textarea.ag-input,
+select.ag-select,
+select.ag-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--ag-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ag-text);
+  font-family: inherit;
+  outline: none;
+  transition:
+    border-color var(--ag-duration),
+    box-shadow var(--ag-duration);
+}
+
+input.ag-input:focus,
+textarea.ag-input:focus,
+select.ag-select:focus,
+select.ag-input:focus {
+  border-color: var(--ag-accent);
+  box-shadow: 0 0 0 3px rgba(77, 107, 254, 0.25);
+}
+
+select.ag-select,
+select.ag-input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: none;
+  border-radius: 12px;
+  padding-right: 40px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--ag-muted) 50%),
+    linear-gradient(135deg, var(--ag-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% - 2px),
+    calc(100% - 12px) calc(50% - 2px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+
+select.ag-select option,
+select.ag-input option,
+select.ag-select optgroup,
+select.ag-input optgroup {
+  background-color: #242426;
+  color: #ffffff;
+}
+
+select.ag-select option:checked,
+select.ag-input option:checked {
+  background: var(--ag-accent);
+  color: #ffffff;
+}
+
+textarea.ag-input {
+  min-height: 180px;
+  resize: vertical;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+button.ag-btn {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 22px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition:
+    background var(--ag-duration) var(--ag-ease),
+    transform 0.2s ease;
+}
+
+button.ag-btn:active {
+  transform: scale(0.98);
+}
+
+button.ag-btn-primary {
+  background: linear-gradient(135deg, var(--ag-accent), #3d58d6);
+  color: #fff;
+}
+
+button.ag-btn-primary:hover {
+  background: linear-gradient(135deg, var(--ag-accent-hover), var(--ag-accent));
+}
+
+button.ag-btn-ghost {
+  background: transparent;
+  color: var(--ag-text);
+  border: 1px solid var(--ag-border);
+}
+
+button.ag-btn-ghost:hover {
+  border-color: var(--ag-accent);
+  color: var(--ag-accent);
+}
+
+.ag-card {
+  background: linear-gradient(160deg, var(--ag-surface), var(--ag-surface2));
+  border: 1px solid var(--ag-border);
+  border-radius: var(--ag-radius);
+  padding: 22px 24px;
+  backdrop-filter: blur(var(--ag-blur));
+}
+
+.ag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(77, 107, 254, 0.15);
+  color: var(--ag-accent);
+  border: 1px solid rgba(77, 107, 254, 0.35);
+}
