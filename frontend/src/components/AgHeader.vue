@@ -42,8 +42,9 @@ function logout() {
 
 .inner {
   width: 100%;
-  margin: 0;
-  padding: 14px 14px 14px 10px;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 14px 22px 14px 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -56,6 +57,7 @@ function logout() {
   font-size: 14px;
   color: #fff;
   text-decoration: none;
+  margin-left: 4px;
 }
 
 .ai {
