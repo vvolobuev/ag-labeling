@@ -2,10 +2,13 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
+	"math"
 	"net/http"
 	"strings"
 
 	"my-app/middleware"
+	"my-app/ylabel"
 
 	"github.com/gin-gonic/gin"
 )
@@ -101,4 +104,82 @@ func (h *ExploreHandler) ListPublicProjects(c *gin.Context) {
 		})
 	}
 	c.JSON(http.StatusOK, gin.H{"projects": list})
+}
+
+// LandingSamples returns a few random annotated images from public projects (draft dataset)
+// for the marketing landing page. Guests use GET /api/images/:id/file (no JWT).
+func (h *ExploreHandler) LandingSamples(c *gin.Context) {
+	rows, err := h.DB.Query(`
+		SELECT i.id::text, i.width, i.height, i.label_text,
+		       COALESCE(v.data_yaml,''), TRIM(COALESCE(p.name,''))
+		FROM ag_dataset_images i
+		INNER JOIN ag_dataset_versions v ON v.id = i.version_id AND v.is_draft = TRUE
+		INNER JOIN ag_projects p ON p.id = v.project_id
+		WHERE p.is_public = TRUE
+		  AND i.in_dataset = TRUE
+		  AND i.bbox_count > 0
+		  AND i.width > 0 AND i.height > 0
+		ORDER BY random()
+		LIMIT 3
+	`)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "db"})
+		return
+	}
+	defer rows.Close()
+
+	var samples []gin.H
+	for rows.Next() {
+		var iid, labelText, yamlRaw, pname string
+		var w, h int
+		if err := rows.Scan(&iid, &w, &h, &labelText, &yamlRaw, &pname); err != nil {
+			continue
+		}
+		names := yamlClassNamesSlice(yamlRaw)
+		boxes := ylabel.CompactBBoxes(labelText, 256)
+		var boxJSON []gin.H
+		for _, b := range boxes {
+			clsID := int(b[0])
+			xc, yc, bw, bh := b[1], b[2], b[3], b[4]
+			left := (xc - bw/2) * 100
+			top := (yc - bh/2) * 100
+			wp := bw * 100
+			hp := bh * 100
+			left = math.Max(0, math.Min(100, left))
+			top = math.Max(0, math.Min(100, top))
+			wp = math.Max(0, math.Min(100-left, wp))
+			hp = math.Max(0, math.Min(100-top, hp))
+			nm := ""
+			if clsID >= 0 && clsID < len(names) && strings.TrimSpace(names[clsID]) != "" {
+				nm = names[clsID]
+			} else {
+				nm = fmt.Sprintf("class_%d", clsID)
+			}
+			boxJSON = append(boxJSON, gin.H{
+				"class_id":    clsID,
+				"name":       nm,
+				"left_pct":   left,
+				"top_pct":    top,
+				"width_pct":  wp,
+				"height_pct": hp,
+			})
+		}
+		if len(boxJSON) == 0 {
+			continue
+		}
+		caption := pname
+		if caption == "" {
+			caption = "Public dataset sample"
+		}
+		samples = append(samples, gin.H{
+			"image_id":   iid,
+			"width":      w,
+			"height":     h,
+			"project":    pname,
+			"caption":    caption,
+			"boxes":      boxJSON,
+			"file_route": "/api/images/" + iid + "/file",
+		})
+	}
+	c.JSON(http.StatusOK, gin.H{"samples": samples})
 }

@@ -104,18 +104,16 @@ func projectIsPublic(db *sql.DB, projectID string) (bool, error) {
 }
 
 func RequireProjectViewerOrPublic(c *gin.Context, db *sql.DB, projectID string) (memberRole string, ok bool) {
-	uid := middleware.UserID(c)
-	if strings.TrimSpace(uid) == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-		return "", false
-	}
-	r, err := projectMemberRole(db, uid, projectID)
-	if err == nil && roleRank(r) >= roleRank("viewer") {
-		return r, true
-	}
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "db"})
-		return "", false
+	uid := strings.TrimSpace(middleware.UserID(c))
+	if uid != "" {
+		r, err := projectMemberRole(db, uid, projectID)
+		if err == nil && roleRank(r) >= roleRank("viewer") {
+			return r, true
+		}
+		if err != nil && !errors.Is(err, sql.ErrNoRows) {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "db"})
+			return "", false
+		}
 	}
 	pub, err2 := projectIsPublic(db, projectID)
 	if errors.Is(err2, sql.ErrNoRows) {
@@ -128,6 +126,10 @@ func RequireProjectViewerOrPublic(c *gin.Context, db *sql.DB, projectID string) 
 	}
 	if pub {
 		return "public", true
+	}
+	if uid == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return "", false
 	}
 	c.JSON(http.StatusForbidden, gin.H{"error": "no access"})
 	return "", false

@@ -56,6 +56,7 @@ func main() {
 	regRL := middleware.SlidingWindowRateLimit(8, time.Hour, middleware.ClientIPKey)
 	loginRL := middleware.SlidingWindowRateLimit(25, 15*time.Minute, middleware.ClientIPKey)
 	adminRL := middleware.SlidingWindowRateLimit(12, 15*time.Minute, middleware.ClientIPKey)
+	landingRL := middleware.SlidingWindowRateLimit(40, time.Hour, middleware.ClientIPKey)
 
 	api.POST("/auth/register", regRL, authH.Register)
 	api.POST("/auth/login", loginRL, authH.Login)
@@ -64,6 +65,11 @@ func main() {
 	api.GET("/admin/overview", adminH.Overview)
 	api.DELETE("/admin/workspaces/:id", adminH.DeleteWorkspace)
 	api.DELETE("/admin/projects/:pid", adminH.DeleteProject)
+
+	eh := &handlers.ExploreHandler{DB: database.DB}
+	dh := &handlers.DatasetHandler{DB: database.DB, StorageRoot: storageRoot}
+	api.GET("/public/landing-samples", landingRL, eh.LandingSamples)
+	api.GET("/images/:imgid/file", dh.GetImageFile)
 
 	authed := api.Group("")
 	authed.Use(middleware.JWTMiddleware(jwtSecret))
@@ -87,10 +93,7 @@ func main() {
 	authed.PATCH("/projects/:pid", ph.Patch)
 	authed.DELETE("/projects/:pid", ph.Delete)
 
-	eh := &handlers.ExploreHandler{DB: database.DB}
 	authed.GET("/explore/projects", eh.ListPublicProjects)
-
-	dh := &handlers.DatasetHandler{DB: database.DB, StorageRoot: storageRoot}
 	authed.GET("/projects/:pid/versions", dh.ListVersions)
 	authed.GET("/projects/:pid/versions/source-stats", dh.VersionSourceStats)
 	authed.GET("/projects/:pid/versions/name-available", dh.VersionNameAvailable)
@@ -118,7 +121,6 @@ func main() {
 	authed.PATCH("/versions/:vid/names", dh.PatchVersionNames)
 	authed.GET("/versions/:vid/images", dh.ListImages)
 	authed.GET("/images/:imgid/json", dh.GetImageJSON)
-	authed.GET("/images/:imgid/file", dh.GetImageFile)
 	authed.PUT("/images/:imgid/label", dh.PutLabel)
 
 	port := os.Getenv("SERVER_PORT")

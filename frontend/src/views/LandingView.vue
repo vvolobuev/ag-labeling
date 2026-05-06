@@ -219,10 +219,17 @@ const features = [
   overflow: hidden;
   border: 1px solid var(--ag-border);
   background: linear-gradient(160deg, rgba(36, 36, 38, 0.98), rgba(27, 27, 28, 0.99));
+  margin-top: 32px;
+}
+
+@media (min-width: 1101px) {
+  .hero-visual {
+    margin-top: 44px;
+  }
 }
 
 .visual-inner {
-  padding: 20px 18px 8px;
+  padding: 24px 18px 8px;
 }
 
 .visual-kicker {
