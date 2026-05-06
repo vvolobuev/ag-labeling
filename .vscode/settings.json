@@ -1,0 +1,14 @@
+{
+  "terminal.integrated.env.linux": {
+    "GIT_ASKPASS": "",
+    "SSH_ASKPASS": ""
+  },
+  "terminal.integrated.env.osx": {
+    "GIT_ASKPASS": "",
+    "SSH_ASKPASS": ""
+  },
+  "terminal.integrated.env.windows": {
+    "GIT_ASKPASS": "",
+    "SSH_ASKPASS": ""
+  }
+}
