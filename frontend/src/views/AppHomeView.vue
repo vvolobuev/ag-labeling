@@ -134,7 +134,7 @@ watch(wid, load)
 
 <style scoped>
 .home {
-  padding: 8px 22px 48px;
+  padding: 28px 22px 48px;
   max-width: 1100px;
 }
 
@@ -169,7 +169,7 @@ watch(wid, load)
 
 .hero h1 {
   margin: 0 0 6px;
-  font-size: clamp(26px, 3.5vw, 36px);
+  font-size: clamp(21px, 2.6vw, 28px);
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.15;
@@ -182,8 +182,8 @@ watch(wid, load)
 
 .lead {
   margin: 0;
-  font-size: 15px;
-  line-height: 1.65;
+  font-size: 14px;
+  line-height: 1.6;
   color: var(--ag-muted);
   max-width: 560px;
 }
@@ -209,14 +209,14 @@ watch(wid, load)
 }
 
 .st-val {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 800;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
 
 .st-lbl {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--ag-muted);
   line-height: 1.4;
 }
