@@ -69,7 +69,7 @@ func main() {
 	eh := &handlers.ExploreHandler{DB: database.DB}
 	dh := &handlers.DatasetHandler{DB: database.DB, StorageRoot: storageRoot}
 	api.GET("/public/landing-samples", landingRL, eh.LandingSamples)
-	api.GET("/images/:imgid/file", dh.GetImageFile)
+	api.GET("/images/:imgid/file", middleware.OptionalJWTMiddleware(jwtSecret), dh.GetImageFile)
 
 	authed := api.Group("")
 	authed.Use(middleware.JWTMiddleware(jwtSecret))
