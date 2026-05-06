@@ -8,7 +8,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// ParseClassNames extracts YOLO class names from data.yaml text.
 func ParseClassNames(dataYaml []byte) []string {
 	var root map[string]interface{}
 	if err := yaml.Unmarshal(dataYaml, &root); err != nil {

@@ -234,9 +234,7 @@ func copyOrResizeImage(srcPath, dstPath, ext string, resize int, fallbackW, fall
 	}
 	img, format, err := decodeImage(raw)
 	if err != nil {
-		// Preserve source file as-is when decoder is unavailable
-		// (e.g. AVIF/BMP on environments without matching image codec),
-		// so version creation stays deterministic across projects.
+
 		if mkErr := os.MkdirAll(filepath.Dir(dstPath), 0o755); mkErr != nil {
 			return 0, 0, mkErr
 		}

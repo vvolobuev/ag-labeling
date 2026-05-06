@@ -45,9 +45,6 @@ func isBBoxLine(t string) bool {
 	return ok
 }
 
-// NormalizeToBBoxLabel converts YOLO segmentation lines
-// ("cls x1 y1 x2 y2 ...") into bbox lines ("cls cx cy w h").
-// Existing bbox lines are kept as-is (normalized formatting).
 func NormalizeToBBoxLabel(label string) string {
 	var out []string
 	for _, line := range strings.Split(strings.ReplaceAll(label, "\r\n", "\n"), "\n") {

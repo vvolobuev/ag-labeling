@@ -1,6 +1,3 @@
-# На сервере файлы попадают в volume /app/storage (диск VPS). Чтобы держать снимки только на своём ПК —
-# запускайте backend локально (run-local.sh) и не монтируйте сюда то, что должно остаться дома.
-# host network: API sees Postgres on localhost:5432 (published by postgres container on host)
 services:
   app:
     network_mode: host
@@ -11,8 +8,9 @@ services:
       STORAGE_ROOT: /app/storage
     volumes:
       - alphaguard_storage:/app/storage
-      # so godotenv.Load() sees /app/.env (WORKDIR); env vars also from env_file
       - ./backend/.env:/app/.env:ro
+      - /var/www/certbot:/var/www/certbot:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     restart: unless-stopped
 
 volumes:

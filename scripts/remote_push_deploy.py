@@ -73,7 +73,7 @@ def main() -> int:
         print("Set DEPLOY_SSH_PASSWORD", file=sys.stderr)
         return 2
 
-    host = os.environ.get("DEPLOY_SSH_HOST", "194.67.102.231").strip()
+    host = os.environ.get("DEPLOY_SSH_HOST", "alpha-guard.online").strip()
     user = os.environ.get("DEPLOY_SSH_USER", "root").strip()
 
     root = pathlib.Path(__file__).resolve().parents[1]

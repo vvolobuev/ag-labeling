@@ -1,7 +1,4 @@
 #!/bin/sh
-# Полный перезапуск локального стека Alpha Guard.
-# Без аргументов — останавливает порты API/Vite/file-server и запускает ./run-local.sh (Vite впереди в терминале).
-# ./restart-local.sh --bg — то же, но всё в фоне и логи в /tmp/alpha-guard-*.log (удобно для агента/скриптов).
 
 set -e
 ROOT="$(cd "$(dirname "$0")" && pwd)"

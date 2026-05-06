@@ -14,6 +14,10 @@ frontend/build/
 .env
 .env.local
 .env.production
+backend/.env
+
+# Local Go build binary (never commit)
+backend/my-app
 
 # Logs
 npm-debug.log*

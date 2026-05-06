@@ -11,8 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// importJobs holds import jobs in-memory (single process / dev; resets on restart).
-var importJobs sync.Map // jobID -> *importJob
+var importJobs sync.Map
 
 type importJob struct {
 	mu              sync.Mutex
@@ -22,14 +21,14 @@ type importJob struct {
 }
 
 type importJobStatus struct {
-	Phase   string  `json:"phase"`
-	Percent int     `json:"percent"` // 0-100 while running; -1 while queued
-	Detail  string  `json:"detail,omitempty"`
-	Done    bool    `json:"done"`
-	Err     string  `json:"error,omitempty"`
-	HTTP    int     `json:"http,omitempty"`
-	Result  gin.H   `json:"result,omitempty"`
-	RawErr  gin.H   `json:"error_body,omitempty"`
+	Phase   string `json:"phase"`
+	Percent int    `json:"percent"`
+	Detail  string `json:"detail,omitempty"`
+	Done    bool   `json:"done"`
+	Err     string `json:"error,omitempty"`
+	HTTP    int    `json:"http,omitempty"`
+	Result  gin.H  `json:"result,omitempty"`
+	RawErr  gin.H  `json:"error_body,omitempty"`
 }
 
 const jobIDBytes = 10
@@ -41,7 +40,7 @@ func scheduleJobExpire(jobID string) {
 func newImportJob(userID string) string {
 	b := make([]byte, jobIDBytes)
 	if _, err := rand.Read(b); err != nil {
-		// very rare; ID is still unique enough, but keep fallback path
+
 		for i := range b {
 			b[i] = byte(time.Now().UnixNano() >> (8 * (i % 8)))
 		}
@@ -135,7 +134,6 @@ func importJobByID(jobID string) (*importJob, bool) {
 	return j, ok
 }
 
-// GetImportJob polls background import status.
 func (_ *DatasetHandler) GetImportJob(c *gin.Context) {
 	jid := c.Param("jid")
 	job, ok := importJobByID(jid)

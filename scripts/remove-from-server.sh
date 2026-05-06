@@ -1,6 +1,4 @@
 #!/bin/sh
-# На VPS под root: удалить развёртывание ALPHA GUARD AI (compose, файлы, тома приложения).
-# Не трогает контейнер postgres-db и вашу БД.
 
 set +e
 echo ">>> stopping compose (if present)"

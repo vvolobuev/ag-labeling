@@ -24,6 +24,6 @@ RUN chmod +x /app/start.sh
 
 RUN mkdir -p /app/storage
 
-EXPOSE 80
+EXPOSE 80 443
 WORKDIR /app
 CMD ["/app/start.sh"]

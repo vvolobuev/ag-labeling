@@ -25,4 +25,3 @@ func TestCompactBBoxes_SupportsSegmentationLines(t *testing.T) {
 		t.Fatalf("invalid bbox values: %#v", b)
 	}
 }
-

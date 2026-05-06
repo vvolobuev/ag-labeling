@@ -81,7 +81,6 @@ func countImageFilesInDir(dir string) int {
 	return n
 }
 
-// pickImageSourceDir resolves common YOLO/Roboflow layouts: flat images/, split/train/images/, etc.
 func pickImageSourceDir(candidate string) (string, bool) {
 	st, err := os.Stat(candidate)
 	if err != nil || !st.IsDir() {
@@ -97,7 +96,6 @@ func pickImageSourceDir(candidate string) (string, bool) {
 	return "", false
 }
 
-// imageDirCandidates mirrors Ultralytics YAML: paths are relative to optional `path:` then YAML dir fallbacks.
 func imageDirCandidates(datasetBase, yamlDir, splitKey, raw string) []string {
 	raw = filepath.FromSlash(strings.TrimSpace(raw))
 	if raw == "" {
@@ -115,7 +113,7 @@ func imageDirCandidates(datasetBase, yamlDir, splitKey, raw string) []string {
 	}
 	add(resolveRel(datasetBase, raw))
 	add(resolveRel(yamlDir, raw))
-	// Explicit path + alternate roots (nested zips / wrong path:)
+
 	sk := filepath.FromSlash(strings.TrimSpace(splitKey))
 	if sk != "" {
 		add(filepath.Join(datasetBase, sk, "images"))
@@ -154,7 +152,6 @@ type yoloImportTask struct {
 	Dir   string
 }
 
-// planYOLOTasks собирает каталоги изображений без копирования (data.yaml или train/valid/test).
 func planYOLOTasks(datasetRoot string) (tasks []yoloImportTask, yamlText string, yamlPath string, dy *yoloYAML, datasetBase string, err error) {
 	yamlPath = shallowFindDataYAML(datasetRoot, 6)
 	if yamlPath != "" {
@@ -220,8 +217,6 @@ test: test/images
 	return tasks, yamlText, "", nil, datasetBase, nil
 }
 
-// ImportYOLOFromDir copies images/labels into versionDir and inserts rows (absolute versionDir).
-// onImage — вызывается после каждого импортированного изображения (done уже увеличен); может быть nil.
 func ImportYOLOFromDir(db *sql.DB, datasetRoot, versionRoot, versionID string, onImage func(done, total int), shouldStop func() bool) (yamlText string, perSplit map[string]int, err error) {
 	perSplit = map[string]int{"train": 0, "valid": 0, "test": 0}
 
@@ -397,10 +392,7 @@ func readLabelForImage(imgDir, stem string) string {
 	if strings.TrimSpace(stem) == "" {
 		return ""
 	}
-	// Support common YOLO layouts:
-	// - train/images + train/labels
-	// - images/train + labels/train
-	// - flat images + labels
+
 	parent := filepath.Dir(imgDir)
 	base := filepath.Base(imgDir)
 	grand := filepath.Dir(parent)

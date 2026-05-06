@@ -21,7 +21,6 @@ func escapeILike(s string) string {
 	return s
 }
 
-// ListPublicProjects — публичные датасеты (проекты) по всем workspace; только для авторизованных.
 func (h *ExploreHandler) ListPublicProjects(c *gin.Context) {
 	if strings.TrimSpace(middleware.UserID(c)) == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})

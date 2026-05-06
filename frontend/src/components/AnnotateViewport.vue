@@ -95,9 +95,9 @@ import {
 const props = defineProps({
   modelValue: { type: Array, default: () => [] },
   imageId: { type: String, required: true },
-  /** Class for new box (index in names). */
+  
   defaultClassIndex: { type: Number, default: 0 },
-  interactionMode: { type: String, default: 'box' }, // 'box' | 'hand'
+  interactionMode: { type: String, default: 'box' }, 
   hoverClassIndex: { type: Number, default: null },
   selectedIndex: { type: Number, default: null },
   readOnly: { type: Boolean, default: false },
@@ -249,8 +249,8 @@ function hitBBoxIndex(px, py) {
   return null
 }
 
-/** @typedef {{nw:{x:number,y:number}, cx:number, cy:number, w:number, h:number}} GrabMove */
-/** norm delta from accumulated pixel delta */
+
+
 
 function pxToNormDelta(dpx, dpy) {
   const d = disp.value

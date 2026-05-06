@@ -226,8 +226,7 @@ func buildDatasetYAMLText(classNames []string, resize int, keepOriginal bool) st
 }
 
 func (h *DatasetHandler) allocateAutoVersionName(pid string) (string, error) {
-	// Backward-safe: ensure counter column exists before using it.
-	// Some running databases may not have picked schema compat yet.
+
 	if _, err := h.DB.Exec(`ALTER TABLE IF EXISTS ag_projects ADD COLUMN IF NOT EXISTS version_counter INT NOT NULL DEFAULT 0`); err != nil {
 		return "", err
 	}

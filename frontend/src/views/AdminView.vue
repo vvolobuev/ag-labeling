@@ -113,8 +113,8 @@ const ADMIN_TOKEN_KEY = 'ag_admin_token'
 const ADMIN_OVERVIEW_CACHE_KEY = 'ag_admin_overview_cache'
 
 const adminToken = ref(localStorage.getItem(ADMIN_TOKEN_KEY) || '')
-const login = ref('admin')
-const password = ref('123456')
+const login = ref('')
+const password = ref('')
 const overview = ref(null)
 const loading = ref(false)
 const overlayLoading = ref(false)
@@ -168,7 +168,7 @@ function saveOverviewCache(payload) {
   try {
     localStorage.setItem(ADMIN_OVERVIEW_CACHE_KEY, JSON.stringify(payload))
   } catch {
-    // ignore storage quota issues
+    
   }
 }
 
@@ -181,7 +181,7 @@ function restoreOverviewCache() {
     if (parsed.data) overview.value = parsed.data
     if (parsed.ts) lastUpdatedAt.value = Number(parsed.ts) || 0
   } catch {
-    // ignore parse issues
+    
   }
 }
 

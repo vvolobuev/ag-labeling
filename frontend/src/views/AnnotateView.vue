@@ -1021,7 +1021,7 @@ watch(labelText, () => nextTick(() => syncEditorMetrics()))
 .rename-row .ag-input { width: 100%; min-width: 0; }
 .class-select { width: 100%; }
 .class-select :deep(.ag-selectx-menu) {
-  max-height: 340px; /* ~10 rows */
+  max-height: 340px; 
   overflow-y: auto;
 }
 

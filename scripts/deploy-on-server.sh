@@ -1,5 +1,4 @@
 #!/bin/sh
-# Run on the VPS as root after uploading /tmp/alpha-guard-ai-deploy.tgz (or reuse /opt/alpha-guard-ai).
 set -e
 TARBALL="${TARBALL:-/tmp/alpha-guard-ai-deploy.tgz}"
 APP_DIR="${APP_DIR:-/opt/alpha-guard-ai}"
@@ -19,12 +18,15 @@ test -f backend/.env || { echo "missing backend/.env"; exit 1; }
 
 sed -i 's/^DB_HOST=.*/DB_HOST=127.0.0.1/' backend/.env
 if grep -q '^PUBLIC_APP_URL=' backend/.env; then
-  sed -i "s|^PUBLIC_APP_URL=.*|PUBLIC_APP_URL=http://194.67.102.231|" backend/.env
+  sed -i "s|^PUBLIC_APP_URL=.*|PUBLIC_APP_URL=https://alpha-guard.online|" backend/.env
 else
-  echo 'PUBLIC_APP_URL=http://194.67.102.231' >> backend/.env
+  echo 'PUBLIC_APP_URL=https://alpha-guard.online' >> backend/.env
 fi
 
-command -v ufw >/dev/null 2>&1 && ufw status 2>/dev/null | grep -q active && ufw allow 80/tcp comment alpha-guard 2>/dev/null || true
+command -v ufw >/dev/null 2>&1 && ufw status 2>/dev/null | grep -q active && {
+  ufw allow 80/tcp comment alpha-guard-http 2>/dev/null || true
+  ufw allow 443/tcp comment alpha-guard-https 2>/dev/null || true
+}
 
 docker compose version
 LOG=/tmp/ag-compose.log
