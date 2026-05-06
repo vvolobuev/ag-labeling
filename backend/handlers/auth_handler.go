@@ -10,6 +10,7 @@ import (
 	"net/smtp"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -20,6 +21,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
+
+const bcryptDummyHash = "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi"
 
 type AuthHandler struct {
 	DB          *sql.DB
@@ -39,11 +42,26 @@ type loginBody struct {
 	Password string `json:"password" binding:"required"`
 }
 
+func (h *AuthHandler) jwtTTL() time.Duration {
+	s := strings.TrimSpace(os.Getenv("JWT_EXPIRY_HOURS"))
+	if s == "" {
+		return 72 * time.Hour
+	}
+	n, err := strconv.Atoi(s)
+	if err != nil || n < 1 {
+		return 72 * time.Hour
+	}
+	if n > 720 {
+		n = 720
+	}
+	return time.Duration(n) * time.Hour
+}
+
 func (h *AuthHandler) SignToken(userID string) (string, error) {
 	claims := middleware.Claims{
 		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(168 * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(h.jwtTTL())),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			Issuer:    "alpha-guard-ai",
 		},
@@ -71,7 +89,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid email"})
 		return
 	}
-	hash, err := bcrypt.GenerateFromPassword([]byte(b.Password), bcrypt.DefaultCost)
+	hash, err := bcrypt.GenerateFromPassword([]byte(b.Password), 12)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "hash error"})
 		return
@@ -125,15 +143,19 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		`SELECT id::text, password_hash, email_verified FROM ag_users WHERE email=$1`,
 		email,
 	).Scan(&uid, &hash, &verified)
+	missingUser := false
 	if err == sql.ErrNoRows {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
-		return
-	}
-	if err != nil {
+		missingUser = true
+		hash = bcryptDummyHash
+	} else if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "db error"})
 		return
 	}
 	if bcrypt.CompareHashAndPassword([]byte(hash), []byte(b.Password)) != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
+		return
+	}
+	if missingUser {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		return
 	}

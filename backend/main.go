@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"my-app/database"
 	"my-app/handlers"
@@ -52,10 +53,14 @@ func main() {
 	adminH := &handlers.AdminHandler{DB: database.DB, JWTSecret: jwtSecret, StorageRoot: storageRoot}
 	api := r.Group("/api")
 
-	api.POST("/auth/register", authH.Register)
-	api.POST("/auth/login", authH.Login)
+	regRL := middleware.SlidingWindowRateLimit(8, time.Hour, middleware.ClientIPKey)
+	loginRL := middleware.SlidingWindowRateLimit(25, 15*time.Minute, middleware.ClientIPKey)
+	adminRL := middleware.SlidingWindowRateLimit(12, 15*time.Minute, middleware.ClientIPKey)
+
+	api.POST("/auth/register", regRL, authH.Register)
+	api.POST("/auth/login", loginRL, authH.Login)
 	api.GET("/auth/verify", authH.VerifyEmail)
-	api.POST("/admin/login", adminH.Login)
+	api.POST("/admin/login", adminRL, adminH.Login)
 	api.GET("/admin/overview", adminH.Overview)
 	api.DELETE("/admin/workspaces/:id", adminH.DeleteWorkspace)
 	api.DELETE("/admin/projects/:pid", adminH.DeleteProject)

@@ -6,6 +6,7 @@ services:
       - backend/.env
     environment:
       STORAGE_ROOT: /app/storage
+      GIN_MODE: release
     volumes:
       - alphaguard_storage:/app/storage
       - ./backend/.env:/app/.env:ro

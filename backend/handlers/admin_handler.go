@@ -27,13 +27,7 @@ type adminClaims struct {
 
 func (h *AdminHandler) adminLoginEnv() (string, string) {
 	login := strings.TrimSpace(os.Getenv("ADMIN_LOGIN"))
-	pass := os.Getenv("ADMIN_PASSWORD")
-	if login == "" {
-		login = "admin"
-	}
-	if pass == "" {
-		pass = "123456"
-	}
+	pass := strings.TrimSpace(os.Getenv("ADMIN_PASSWORD"))
 	return login, pass
 }
 
@@ -41,7 +35,7 @@ func (h *AdminHandler) signAdminToken() (string, error) {
 	claims := adminClaims{
 		Admin: true,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(8 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			Issuer:    "alpha-guard-admin",
 			Subject:   "admin",
@@ -83,6 +77,10 @@ func (h *AdminHandler) Login(c *gin.Context) {
 		return
 	}
 	envLogin, envPass := h.adminLoginEnv()
+	if envLogin == "" || envPass == "" {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "admin login is not configured on the server"})
+		return
+	}
 	if strings.TrimSpace(b.Login) != envLogin || b.Password != envPass {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid admin credentials"})
 		return
